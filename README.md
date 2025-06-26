@@ -21,8 +21,7 @@ Questo progetto Arduino implementa un sistema di controllo preciso per due pompe
 * **2x Pompe Roller:** Controllabili via PWM.
 * **2x Flussimetri:**  Sensirion SFLS1300F o simili.
 * **Multiplexer I2C:** TCA9548A
-* **Modulo Bluetooth Low Energy (BLE):** (Se la tua scheda Arduino non lo integra già - es. HC-05 se compatibile con BLE, o moduli dedicati come HM-10).
-* **Driver Motore/MOSFET:** Per pilotare le pompe roller con i segnali PWM.
+* **Driver Motore:** Per pilotare le pompe roller con i segnali PWM.
 * **Cavi di collegamento, Breadboard, Alimentatore.**
   
 ## Schema di Collegamento (Esempio)
