@@ -18,10 +18,10 @@ Questo progetto Arduino implementa un sistema di controllo preciso per due pompe
 
 ## Componenti Hardware Necessari
 
-* **Scheda Arduino compatibile:** (Es. Arduino Nano, ESP32, etc. - *specifica il modello che usi*)
+* **Scheda Arduino compatibile con Modulo Bluetooth Low Energy (BLE):** Arduino mkr 1010
 * **2x Pompe Roller:** Controllabili via PWM.
-* **2x Flussimetri:** Con interfaccia I2C (es. Sensirion SFM3xxx, o compatibile).
-* **Multiplexer I2C:** (Es. PCA9548A Breakout Board)
+* **2x Flussimetri:**  Sensirion SFLS1300F o simili.
+* **Multiplexer I2C:** TCA9548A
 * **Modulo Bluetooth Low Energy (BLE):** (Se la tua scheda Arduino non lo integra già - es. HC-05 se compatibile con BLE, o moduli dedicati come HM-10).
 * **Driver Motore/MOSFET:** Per pilotare le pompe roller con i segnali PWM.
 * **Cavi di collegamento, Breadboard, Alimentatore.**
@@ -40,7 +40,7 @@ Questo progetto Arduino implementa un sistema di controllo preciso per due pompe
 Questo progetto richiede l'Arduino IDE e le seguenti librerie:
 
 * `Wire.h`: Per la comunicazione I2C (inclusa nell'IDE Arduino).
-* `movingAvg`: Per il calcolo della media mobile dei flussi. [Link alla libreria se disponibile, es. GitHub o Arduino Library Manager]
+* `movingAvg`: Per il calcolo della media mobile dei flussi. [https://github.com/JChristensen/movingAvg]
 * **(Altre librerie se utilizzate, es. per BLE o PID)**
 
 ### Installazione delle Librerie
