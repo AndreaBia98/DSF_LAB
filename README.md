@@ -39,7 +39,6 @@ Questo progetto richiede l'Arduino IDE e le seguenti librerie:
 
 * `Wire.h`: Per la comunicazione I2C (inclusa nell'IDE Arduino).
 * `movingAvg`: Per il calcolo della media mobile dei flussi. Disponibile su GitHub: [https://github.com/JChristensen/movingAvg/tree/master](https://github.com/JChristensen/movingAvg/tree/master)
-* **_(Altre librerie se utilizzate, es. per BLE o PID)_**
 
 ### Installazione delle Librerie
 
@@ -54,7 +53,7 @@ Questo progetto richiede l'Arduino IDE e le seguenti librerie:
 * `multiplexer.h`: Gestione del multiplexer I2C e delle operazioni di base con i sensori I2C.
 * `Flux_Print.h`: Funzioni per la lettura e il processamento dei dati dai flussimetri, inclusa la scalatura e la media mobile. Contiene anche logiche di stampa su seriale.
 * `filtroiir.h`: Implementazione di un filtro IIR per il segnale dei flussimetri.
-* `gestione_dati.h`: Funzione per l'interpretazione dei comandi e dei dati ricevuti via BLE.
+* `gestione_dati.h`: Funzione per l'interpretazione dei comandi e dei dati ricevuti via BLE.**(in questo momento si trova in coda al file .ino)**.
 
 ## Riassunto delle Funzioni Utilizzate
 
