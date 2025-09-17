@@ -1,6 +1,4 @@
 ```mermaid
-
-
 flowchart RL
  subgraph Setup["Setup"]
         B["Inizializza seriale, I2C, pin, PID"]
@@ -46,6 +44,4 @@ flowchart RL
     F -- No --> E
     D@{ shape: rect}
     E@{ shape: rect}
-
-
 ```
