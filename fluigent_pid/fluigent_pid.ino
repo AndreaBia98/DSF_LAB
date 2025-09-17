@@ -67,6 +67,10 @@ float beta = 2.427;
 float dati[7];
 int pwm1_set = 0;
 int pwm2_set = 0;
+
+
+
+//#include "gestione_dati.h"
 void setup() {
   Serial.begin(115200);
   Wire.begin();
@@ -99,8 +103,8 @@ void setup() {
   // Inizializzazione PID
   pid1.SetOutputLimits(0, 4095);  // PWM range
   pid2.SetOutputLimits(0, 4095);
-  pid1.SetMode(AUTOMATIC);
-  pid2.SetMode(AUTOMATIC);
+  pid1.SetMode(MANUAL);
+  pid2.SetMode(MANUAL);
 
   Serial.println("BLE attivo, in attesa di connessione...");
 }
@@ -115,58 +119,76 @@ void loop() {
       gestisciComandiSeriali();
       gestisciComandiBLE();
 
-      // Setpoint e input aggiornati
-      q1 = qnew1;
-      q2 = qnew2;
 
-      setpoint1 = q1;
-      setpoint2 = q2;
-
-      input1 = flusso_scale[0];
-      input2 = flusso_scale[1];
-
-      pid1.Compute();
-      pid2.Compute();
-
-      pwm1 = constrain((int)pwm1_d * pid_flag + pwm1_set, 0, 4095);
-      pwm2 = constrain((int)pwm2_d * pid_flag + pwm2_set, 0, 4095);
-
-      analogWrite(MOT1, pwm1);
-      analogWrite(MOT2, pwm2);
-
+      //  questo codice ha effetto siccome non ha PID e sensori collegati. quando verranno
+      if (q1 != qnew1 || q2 != qnew2) {
+        q1 = qnew1;
+        q2 = qnew2;
+        pwm1 = calcolaPWM(qnew1, V1, q1);
+        pwm2 = calcolaPWM(qnew2, V2, q2);
+        analogWrite(MOT1, pwm1);
+        analogWrite(MOT2, pwm2);
+      }
       // Debug flussi
       for (int i = 0; i < 5; i++) {
         Serial.print(dati[i], 1);
         Serial.print(" ");
-      }
-
-      double gap1 = abs(setpoint1 - input1);  //distance away from setpoint
-      if (gap1 < 1) {                         //we're close to setpoint, use conservative tuning parameters
-        pid1.SetTunings(kp, ki, kd);
-      } else {
-        //we're far from setpoint, use aggressive tuning parameters
-        pid1.SetTunings(kp * 4, ki * 4, kd * 4);
-      }
-      if (setpoint1==0){
-        //we're close to setpoint, use conservative tuning parameters
-        pid1.SetTunings(0, 0, 0);
-      }
+     
+       }
+        Serial.println();
 
 
-      double gap2 = abs(setpoint1 - input2);  //distance away from setpoint
-      if (gap2 < 1) {                         //we're close to setpoint, use conservative tuning parameters
-        pid2.SetTunings(kp, ki, kd);
-      } else {
-        //we're far from setpoint, use aggressive tuning parameters
-        pid2.SetTunings(kp * 4, ki * 4, kd * 4);
-      }
-       if (setpoint2==0){
-        //we're close to setpoint, use conservative tuning parameters
-        pid2.SetTunings(0, 0, 0);
-      }
+      //IMPLEMENTARE QUESTO CODICE QUANDO SI AVRA PID
 
-      read_mlpx_flux(TCA_FLUX1, &flusso_scale[0], &raw_flux[0], &flusso_media[0]);
-      read_mlpx_flux(TCA_FLUX2, &flusso_scale[1], &raw_flux[1], &flusso_media[1]);
+      // Setpoint e input aggiornati
+
+
+
+      // q1 = qnew1;
+      // q2 = qnew2;
+
+      // setpoint1 = q1;
+      // setpoint2 = q2;
+
+      // input1 = flusso_scale[0];
+      // input2 = flusso_scale[1];
+
+      // pid1.Compute();
+      // pid2.Compute()
+
+      // pwm1 = constrain((int)pwm1_d * pid_flag + pwm1_set, 0, 4095);
+      // pwm2 = constrain((int)pwm2_d * pid_flag + pwm2_set, 0, 4095);
+
+      // analogWrite(MOT1, pwm1);
+      // analogWrite(MOT2, pwm2);
+
+      // double gap1 = abs(setpoint1 - input1);  //distance away from setpoint
+      // if (gap1 < 1) {                         //we're close to setpoint, use conservative tuning parameters
+      //   pid1.SetTunings(kp, ki, kd);
+      // } else {
+      //   //we're far from setpoint, use aggressive tuning parameters
+      //   pid1.SetTunings(kp * 4, ki * 4, kd * 4);
+      // }
+      // if (setpoint1==0){
+      //   //we're close to setpoint, use conservative tuning parameters
+      //   pid1.SetTunings(0, 0, 0);
+      // }
+
+
+      // double gap2 = abs(setpoint1 - input2);  //distance away from setpoint
+      // if (gap2 < 1) {                         //we're close to setpoint, use conservative tuning parameters
+      //   pid2.SetTunings(kp, ki, kd);
+      // } else {
+      //   //we're far from setpoint, use aggressive tuning parameters
+      //   pid2.SetTunings(kp * 4, ki * 4, kd * 4);
+      // }
+      //  if (setpoint2==0){
+      //   //we're close to setpoint, use conservative tuning parameters
+      //   pid2.SetTunings(0, 0, 0);
+      // }
+
+      //read_mlpx_flux(TCA_FLUX1, &flusso_scale[0], &raw_flux[0], &flusso_media[0]);
+      //read_mlpx_flux(TCA_FLUX2, &flusso_scale[1], &raw_flux[1], &flusso_media[1]);
 
 
 
@@ -179,7 +201,7 @@ void loop() {
 
         inviaDatiBLE();
         previousMillis = millis();
-        f_massa(float _flusso, float _massa_old, int dt)
+        //f_massa(float _flusso, float _massa_old, int dt);
       }
 
       delay(10);
@@ -242,7 +264,48 @@ float pwm2volt(float pwm_value) {
   return v;
 }
 
+void input_managment(float ricevuti[]){
+      if (ricevuti[0] == 0) {
+      qnew1 = ricevuti[1];
+      qnew2 = ricevuti[2];
 
+      pwm1_set = calcolaPWM(qnew1, V1, q1);
+      pwm2_set = calcolaPWM(qnew2, V2, q2);
+    } 
+    
+    
+    else if (ricevuti[0] == 1) {
+      alfa = ricevuti[1];
+      beta = ricevuti[2];
+    } 
+    
+    
+    else if (ricevuti[0] == 2) {
+      pid_flag = true;
+      kp = ricevuti[1];
+      ki = ricevuti[2];
+      kd = ricevuti[3];
+      if (kp == 0 && ki == 0 && kd == 0) {
+        pid_flag = false;
+      }
+    } 
+    
+    else if (ricevuti[0] == 3) {
+      flux_scale[0] = ricevuti[1];
+      flux_scale[1] = ricevuti[2];
+    }
+    
+    else if (ricevuti[0] == -1) {
+      for(int i = 0; i < 4; i++){
+        inviaSettingBLE();
+        delay(100);
+        }
+      //flux_scale[0] = ricevuti[1];
+      //flux_scale[1] = ricevuti[2];
+    }
+
+
+}
 void gestisciComandiSeriali() {
   if (Serial.available() >= 4 * sizeof(float)) {
     float ricevuti[4];
@@ -256,7 +319,7 @@ void gestisciComandiSeriali() {
     }
     Serial.println();
 
-    dati_managment(ricevuti);
+    input_managment(ricevuti);
   }
 }
 
@@ -272,13 +335,13 @@ void gestisciComandiBLE() {
     }
     Serial.println();
 
-    dati_managment(ricevuti);
+    input_managment(ricevuti);
   }
 }
 
 
 void inviaDatiBLE() {
-  dati[0] = analogRead(VOLT) * (5.0 / 1023.0);  // tensione di riferimento (opzionale)
+  dati[0] = analogRead(VOLT) * (3.3 / 1023.0);  // tensione di riferimento (opzionale)
   dati[1] = raw_flux[0];
   dati[2] = pwm2volt(pwm1);  //V1;
   dati[3] = raw_flux[1];
@@ -303,3 +366,5 @@ void inviaSettingBLE() {
 
   ardCharacteristic.setValue((byte *)&dati, sizeof(dati));
 }
+
+
