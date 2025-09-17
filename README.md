@@ -29,10 +29,7 @@ Questo progetto Arduino implementa un sistema di controllo preciso per due pompe
 * **Arduino <-> Multiplexer I2C:** Collegare i pin SDA e SCL dell'Arduino ai rispettivi pin del multiplexer.
 * **Multiplexer I2C <-> Flussimetri:** Collegare ciascun flussimetro a un canale separato del multiplexer.
 * **Arduino <-> Pompe Roller:** Collegare i pin PWM dell'Arduino ai driver delle pompe.
-* **Arduino <-> Modulo BLE:** (Se esterno) Collegare i pin TX/RX o i pin I2C/SPI appropriati.
-
-*(Potresti voler aggiungere qui un link a un diagramma Fritzing o uno schema elettrico se ne hai uno.)*
-
+* **Arduino <-> Modulo BLE:** In MKR1010 e' implementato nel chip.  
 ## Software e Librerie
 
 Questo progetto richiede l'Arduino IDE e le seguenti librerie:
