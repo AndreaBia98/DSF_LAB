@@ -24,7 +24,7 @@ Questo progetto Arduino implementa un sistema di controllo preciso per due pompe
 * **Driver Motore:** Per pilotare le pompe roller con i segnali PWM.
 * **Cavi di collegamento, Breadboard, Alimentatore.**
   
-## Schema di Collegamento (Esempio)
+## Schema di Collegamento
 
 * **Arduino <-> Multiplexer I2C:** Collegare i pin SDA e SCL dell'Arduino ai rispettivi pin del multiplexer.
 * **Multiplexer I2C <-> Flussimetri:** Collegare ciascun flussimetro a un canale separato del multiplexer.
