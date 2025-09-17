@@ -90,7 +90,7 @@ Questo progetto si basa su un'architettura modulare, con diverse funzioni organi
 ```mermaid
 flowchart LR
  subgraph subGraph1["Loop Principale"]
-    direction TB
+    direction LR
         E@{ label: "<span style=\"color:\"> BLEDevice central<br>=<br></span><span style=\"color:\">BLE</span><span style=\"color:\">.</span><span style=\"color:\">central</span><span style=\"color:\">();              </span>" }
         F{"Connesso(central==true)?"}
         G["Accendi LED"]
@@ -106,6 +106,7 @@ flowchart LR
         P["Spegni motori e LED"]
   end
  subgraph Setup["Setup"]
+    direction LR
         B["Inizializza seriale, I2C, pin, PID"]
         A["Inizio"]
         C["Avvia BLE e pubblicizza il servizio"]
