@@ -91,13 +91,7 @@ Questo progetto si basa su un'architettura modulare, con diverse funzioni organi
 
 
 ```mermaid
-flowchart RL
- subgraph Setup["Setup"]
-        B["Inizializza seriale, I2C, pin, PID"]
-        A["Inizio"]
-        C["Avvia BLE e pubblicizza il servizio"]
-        D@{ label: "Stampa 'BLE attivo, in attesa...'" }
-  end
+flowchart LR
  subgraph subGraph1["Loop Principale"]
     direction TB
         E@{ label: "<span style=\"color:\"> BLEDevice central<br>=<br></span><span style=\"color:\">BLE</span><span style=\"color:\">.</span><span style=\"color:\">central</span><span style=\"color:\">();              </span>" }
@@ -113,6 +107,12 @@ flowchart RL
         O["Attendi 10ms"]
         Q["Continua il Loop"]
         P["Spegni motori e LED"]
+  end
+ subgraph Setup["Setup"]
+        B["Inizializza seriale, I2C, pin, PID"]
+        A["Inizio"]
+        C["Avvia BLE e pubblicizza il servizio"]
+        D@{ label: "Stampa 'BLE attivo, in attesa...'" }
   end
     A --> B
     B --> C
@@ -134,6 +134,8 @@ flowchart RL
     P --> Q
     Q --> E
     F -- No --> E
-    D@{ shape: rect}
+
     E@{ shape: rect}
+    D@{ shape: rect}
 ```
+
