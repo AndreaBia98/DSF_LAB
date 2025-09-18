@@ -88,22 +88,27 @@ Questo progetto si basa su un'architettura modulare, con diverse funzioni organi
 
 
 ```mermaid
-flowchart LR
+---
+config:
+  layout: dagre
+---
+flowchart RL
  subgraph subGraph1["Loop Principale"]
-    direction LR
-        E@{ label: "<span style=\"color:\"> BLEDevice central<br>=<br></span><span style=\"color:\">BLE</span><span style=\"color:\">.</span><span style=\"color:\">central</span><span style=\"color:\">();              </span>" }
-        F{"Connesso(central==true)?"}
+    direction TB
+        E@{ label: "attesa di un dispositivo centrale BLE<br><span style=\"color:\"><b>BLEDevice central=<br></b></span><b style=\"color:\"><span style=\"color:\">BLE</span><span style=\"color:\">.</span><span style=\"color:\">central</span><span style=\"color:\">();              </span></b>" }
+        F{"SE CONNESSO A PERIFERICA :Centra Vero<br><b>if(central)</b>"}
         G["Accendi LED"]
-        H{"while(central.connected)"}
+        H@{ label: "finche' connesso al PC:<br><b>while(central.connected)</b>" }
         I["Gestisci comandi Seriali e BLE"]
         J{"Flusso desiderato cambiato?"}
         K["Calcola e applica PWM ai motori"]
         L["Continua"]
-        M{"(millis   - previousMillis) &gt; 100?"}
+        M{"Clock a 100ms per invio dati via BLE<br><b>(millis   - previousMillis) &gt; 100?</b>"}
         N["Invia dati BLE"]
         O["Attendi 10ms"]
-        Q["Continua il Loop"]
         P["Spegni motori e LED"]
+        X["fine While loop"]
+        x["Attesa"]
   end
  subgraph Setup["Setup"]
     direction LR
@@ -115,7 +120,8 @@ flowchart LR
     A --> B
     B --> C
     C --> D
-    E --> F
+    E --> x
+    x --> F
     F -- Si --> G
     G --> H
     H -- Vero --> I
@@ -127,13 +133,15 @@ flowchart LR
     M -- Si --> N
     M -- No --> O
     N --> O
-    O --> Q
+    O --> X
+    X --> H
     H -- Falso --> P
-    P --> Q
-    Q --> E
+    P --> E
     F -- No --> E
-
     E@{ shape: rect}
+    H@{ shape: diamond}
+    X@{ shape: rounded}
     D@{ shape: rect}
+
 ```
 
