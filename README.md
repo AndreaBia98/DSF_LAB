@@ -214,7 +214,7 @@ Questo tab gestisce l'acquisizione e il salvataggio dei dati.
 ---
 ### Struttura del Codice
 
-Il codice è un unico file `.m` generato da App Designer, organizzato in sezioni:
+Il codice è un unico file `.mlapp` generato da App Designer, organizzato in sezioni:
 * `properties (Access = public)`: Dichiarazione dei componenti dell'interfaccia utente.
 * `properties (Access = private)`: Dichiarazione delle variabili e dei buffer per la gestione della logica dell'app.
 * `methods (Access = private)`: Contiene le funzioni di gestione principali, come `scan_ble`, `connection`, `readData` e le callback che rispondono alle interazioni dell'utente.
