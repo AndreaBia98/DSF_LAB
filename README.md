@@ -144,4 +144,78 @@ flowchart RL
     D@{ shape: rect}
 
 ```
+# Applicazione MATLAB per il Controllo di Pompe Roller via Bluetooth BLE
 
+Questo repository contiene l'applicazione **MATLAB App Designer** progettata per comunicare e controllare il sistema di pompaggio descritto nel progetto Arduino. L'app funge da interfaccia utente (GUI) per inviare comandi all'Arduino e visualizzare i dati in tempo reale, sfruttando la connettività Bluetooth Low Energy (BLE).
+
+---
+## Funzionalità Generali e Connessione
+
+* **Interfaccia Utente Grafica (GUI):** Un'app completa e intuitiva, sviluppata con **MATLAB App Designer**, che permette una gestione semplice del sistema.
+* **Gestione della Connessione BLE:**
+    * **Scansione automatica:** L'app cerca e si connette a un dispositivo BLE con il nome "ArduinoARD".
+    * **Comunicazione bidirezionale:** Invia comandi (`single array` di float) e riceve dati in tempo reale dall'Arduino con un periodo di campionamento di 0.01s.
+
+---
+## Tab: Funzionamento
+
+Questo tab gestisce il controllo del pompaggio in tempo reale.
+
+* **Modalità "Portate":** Imposta direttamente le portate desiderate (`Q1`, `Q2`).
+* **Modalità "TFR - FRR":** Calcola le singole portate (`Q1`, `Q2`) a partire da un flusso totale e un rapporto tra i flussi.
+* **Controllo PID e Regressione:**
+    * Invia i parametri di regressione (`alfa`, `beta`) per il controllo a ciclo aperto (`VOLTAGE = Q SET* alfa+Beta`).
+    * Invia i coefficienti del controllo PID (`Kp`, `Ki`, `Kd`) per la modalità a ciclo chiuso (`VOLTAGE = Kp*e+ Ki∫e(t)*dt+ Kp *de/dt ; e= Qread-Qset`).
+
+---
+## Tab: Grafico
+
+Questo tab è dedicato al monitoraggio visivo dei dati.
+
+* **Grafico in tempo reale:** Plotta i dati in tempo reale, inclusi i flussi dei sensori.
+
+---
+## Tab: Portate erogate
+
+Questo tab fornisce un riepilogo quantitativo dei dati di flusso.
+
+* **Monitoraggio volumi:** Mostra i volumi erogati dalle singole pompe e il volume totale tramite gauge e campi numerici.
+
+---
+## Tab: Calibrazione (da implementare)
+
+Questo tab permette di calibrare i flussimetri per una maggiore precisione.
+
+* **Calibrazione dei Flussimetri:**
+    * Permette di avviare una calibrazione per 60 secondi, erogando un flusso fisso per una delle due pompe.
+    * Confronta il volume stimato dal sensore (`Stimato`) con il valore letto da una bilancia esterna (`Bilancia`) per calcolare un fattore di correzione (`K1` e `K2`).
+
+---
+## Tab: Excel (da implementare)
+
+Questo tab gestisce l'acquisizione e il salvataggio dei dati.
+
+* **Acquisizione dati:** Registra i dati in un file Excel (`.xls`) per l'analisi post-processamento.
+
+---
+## Requisiti Software
+
+* **MATLAB R2022b o successiva:** Necessaria per le funzionalità di **App Designer** e la **Bluetooth Low Energy Toolbox**.
+* **Bluetooth Low Energy Toolbox:** Questa toolbox è essenziale per la comunicazione BLE. Se non l'hai già installata, puoi farlo direttamente da MATLAB: vai su `Add-Ons > Get Add-Ons` e cerca "Bluetooth Low Energy Toolbox".
+
+---
+### Guida all'Utilizzo
+
+1.  **Avviare l'App:** Apri il file `BLE_GUI_FLUIGENT` in MATLAB e premi il pulsante "Run" nell'editor di App Designer.
+2.  **Connessione:** Premi il pulsante **"Connessione"** per avviare la ricerca e connetterti all'Arduino. L'app cercherà un dispositivo di nome "ArduinoARD".
+3.  **Configurazione:** Utilizza gli elementi interattivi nei vari tab per controllare le pompe, monitorare i dati e calibrare i sensori.
+4.  **Acquisizione Dati:** Nel tab "Excel", puoi avviare l'acquisizione dati con il pulsante **"Acquisisci"** e salvarli in un file XLS premendo **"XLS"**.
+
+---
+### Struttura del Codice
+
+Il codice è un unico file `.m` generato da App Designer, organizzato in sezioni:
+* `properties (Access = public)`: Dichiarazione dei componenti dell'interfaccia utente.
+* `properties (Access = private)`: Dichiarazione delle variabili e dei buffer per la gestione della logica dell'app.
+* `methods (Access = private)`: Contiene le funzioni di gestione principali, come `scan_ble`, `connection`, `readData` e le callback che rispondono alle interazioni dell'utente.
+* `methods (Access = public)`: Include le funzioni di creazione e gestione dell'app.
