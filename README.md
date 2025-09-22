@@ -148,7 +148,6 @@ flowchart RL
 
 Questo repository contiene l'applicazione **MATLAB App Designer** progettata per comunicare e controllare il sistema di pompaggio descritto nel progetto Arduino. L'app funge da interfaccia utente (GUI) per inviare comandi all'Arduino e visualizzare i dati in tempo reale, sfruttando la connettività Bluetooth Low Energy (BLE).
 
----
 ## Funzionalità Generali e Connessione
 
 * **Interfaccia Utente Grafica (GUI):** Un'app completa e intuitiva, sviluppata con **MATLAB App Designer**, che permette una gestione semplice del sistema.
@@ -156,7 +155,6 @@ Questo repository contiene l'applicazione **MATLAB App Designer** progettata per
     * **Scansione automatica:** L'app cerca e si connette a un dispositivo BLE con il nome "ArduinoARD".
     * **Comunicazione bidirezionale:** Invia comandi (`single array` di float) e riceve dati in tempo reale dall'Arduino con un periodo di campionamento di 0.01s.
 
----
 ## Tab: Funzionamento
 
 Questo tab gestisce il controllo del pompaggio in tempo reale.
@@ -167,21 +165,18 @@ Questo tab gestisce il controllo del pompaggio in tempo reale.
     * Invia i parametri di regressione (`alfa`, `beta`) per il controllo a ciclo aperto (`VOLTAGE = Q SET* alfa+Beta`).
     * Invia i coefficienti del controllo PID (`Kp`, `Ki`, `Kd`) per la modalità a ciclo chiuso (`VOLTAGE = Kp*e+ Ki∫e(t)*dt+ Kp *de/dt ; e= Qread-Qset`).
 
----
 ## Tab: Grafico
 
 Questo tab è dedicato al monitoraggio visivo dei dati.
 
 * **Grafico in tempo reale:** Plotta i dati in tempo reale, inclusi i flussi dei sensori.
 
----
 ## Tab: Portate erogate
 
 Questo tab fornisce un riepilogo quantitativo dei dati di flusso.
 
 * **Monitoraggio volumi:** Mostra i volumi erogati dalle singole pompe e il volume totale tramite gauge e campi numerici.
 
----
 ## Tab: Calibrazione (da implementare)
 
 Questo tab permette di calibrare i flussimetri per una maggiore precisione.
@@ -190,20 +185,17 @@ Questo tab permette di calibrare i flussimetri per una maggiore precisione.
     * Permette di avviare una calibrazione per 60 secondi, erogando un flusso fisso per una delle due pompe.
     * Confronta il volume stimato dal sensore (`Stimato`) con il valore letto da una bilancia esterna (`Bilancia`) per calcolare un fattore di correzione (`K1` e `K2`).
 
----
 ## Tab: Excel (da implementare)
 
 Questo tab gestisce l'acquisizione e il salvataggio dei dati.
 
 * **Acquisizione dati:** Registra i dati in un file Excel (`.xls`) per l'analisi post-processamento.
 
----
 ## Requisiti Software
 
 * **MATLAB R2022b o successiva:** Necessaria per le funzionalità di **App Designer** e la **Bluetooth Low Energy Toolbox**.
 * **Bluetooth Low Energy Toolbox:** Questa toolbox è essenziale per la comunicazione BLE. Se non l'hai già installata, puoi farlo direttamente da MATLAB: vai su `Add-Ons > Get Add-Ons` e cerca "Bluetooth Low Energy Toolbox".
 
----
 ### Guida all'Utilizzo
 
 1.  **Avviare l'App:** Apri il file `BLE_GUI_FLUIGENT` in MATLAB e premi il pulsante "Run" nell'editor di App Designer.
@@ -211,7 +203,7 @@ Questo tab gestisce l'acquisizione e il salvataggio dei dati.
 3.  **Configurazione:** Utilizza gli elementi interattivi nei vari tab per controllare le pompe, monitorare i dati e calibrare i sensori.
 4.  **Acquisizione Dati:** Nel tab "Excel", puoi avviare l'acquisizione dati con il pulsante **"Acquisisci"** e salvarli in un file XLS premendo **"XLS"**.
 
----
+
 ### Struttura del Codice
 
 Il codice è un unico file `.mlapp` generato da App Designer, organizzato in sezioni:
@@ -219,3 +211,41 @@ Il codice è un unico file `.mlapp` generato da App Designer, organizzato in sez
 * `properties (Access = private)`: Dichiarazione delle variabili e dei buffer per la gestione della logica dell'app.
 * `methods (Access = private)`: Contiene le funzioni di gestione principali, come `scan_ble`, `connection`, `readData` e le callback che rispondono alle interazioni dell'utente.
 * `methods (Access = public)`: Include le funzioni di creazione e gestione dell'app.
+
+### 📂 Struttura del Codice, Proprietà e Funzioni
+
+Il codice è un unico file `.m` generato da **MATLAB App Designer** e segue una struttura a classi con sezioni ben definite per le proprietà e i metodi.
+
+#### 📝 Proprietà dell'App
+
+Le proprietà sono variabili interne che contengono i riferimenti ai componenti dell'interfaccia utente (come pulsanti, campi di testo, grafici) e alle variabili di stato usate per la logica dell'applicazione (come la connessione BLE o i buffer di dati).
+
+* `properties (Access = public)`: Dichiarazione di tutti i componenti visibili dell'interfaccia utente (es. `UIFigure`, `TabGroup`, `SetFlowratesButton`).
+* `properties (Access = private)`: Variabili interne per la logica dell'app, non accessibili dall'esterno. Include oggetti BLE (`bleDevice`), timer (`timerObj`), buffer per i dati (`data`, `timeBuffer`) e flag di stato (`calibration`, `logging`).
+
+#### 🛠️ Funzioni (Metodi Privati) `methods (Access = private)`
+
+Queste funzioni eseguono compiti specifici e sono il cuore della logica dell'applicazione. Sono tipicamente chiamate dai callback.
+
+* `scan_ble(app)`: Scansiona i dispositivi BLE disponibili e aggiorna la lista a tendina dell'interfaccia. Cerca in particolare un dispositivo di nome "ArduinoARD".
+* `connection(app)`: Stabilisce la connessione con il dispositivo BLE selezionato. Abilita il pannello di controllo dell'app e avvia un `timer` per l'acquisizione periodica dei dati (`readData`).
+* `disconnection(app)`: Gestisce la disconnessione dal dispositivo BLE. Ferma il timer di lettura dati e disabilita il pannello di controllo dell'app.
+* `readData(app)`: Funzione periodica (`timer`) che legge i dati dal dispositivo BLE, esegue i calcoli sui volumi e aggiorna i grafici e i gauge in tempo reale.
+* `ble_send(app, valore)`: Funzione generica per inviare un array di dati di tipo `single` al dispositivo BLE.
+* `ble_sendq(app, q1, q2)`: Funzione specifica che prepara e invia i valori di portata (`q1`, `q2`) al dispositivo BLE.
+* `ble_sendControl(app, setting_control, alfa, beta, gamma)`: Invia i parametri di controllo all'Arduino, sia per il controllo in anello aperto che in anello chiuso (PID).
+* `send_datas(app)`: Prepara i dati di portata in base alla modalità di funzionamento selezionata (Portate o TFR/FRR) e li invia all'Arduino.
+
+#### 🚀 Callback (Gestori di Eventi) 
+
+Dalla linea `% Callbacks that handle component events [...] methods (Access = private)` si trovano i *callback*. Sono funzioni che si attivano in risposta a un'azione dell'utente o a un evento dell'app, come la pressione di un pulsante o il cambio di valore di un componente.
+
+* `startupFcn(app)`: Eseguito all'avvio dell'app. Avvia la scansione BLE e imposta la configurazione iniziale dell'interfaccia.
+* `ConnessioneButtonValueChanged(app, event)`: Gestisce l'attivazione/disattivazione della connessione BLE al cambio di stato del pulsante `Connessione`.
+* `SetFlowratesButtonPushed(app, event)`: Attivato dal pulsante "Set Flowrates". Avvia il pompaggio con i valori di portata impostati.
+* `CalibraButton_2Pushed(app, event)`: Avvia il processo di calibrazione delle pompe per 60 secondi.
+* `FattoredicorrezioneButtonPushed(app, event)`: Calcola e visualizza il fattore di correzione per il flussimetro al termine della calibrazione.
+* `SendDatasRegressionButtonPushed(app, event)`: Invia i parametri per il controllo in anello aperto.
+* `SendPIDvaluesButtonPushed(app, event)`: Invia i coefficienti PID per il controllo in anello chiuso.
+* `AcquisizioneDatiValueChanged(app, event)`: Avvia o interrompe l'acquisizione dei dati in una tabella per l'esportazione.
+* `XLSButtonPushed(app, event)`: Esporta i dati registrati in un file Excel.
