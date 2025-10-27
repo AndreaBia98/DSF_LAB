@@ -2,14 +2,14 @@
 #include "multiplexer.h"
 #include <PID_v1.h>
 
-#include <QuickPID.h>
+//#include <QuickPID.h>
 // BLE Service e Caratteristica
 BLEService ardService("917649A0-D98E-11E5-9EEC-0002A5D5C51B");
 BLECharacteristic ardCharacteristic("917649A1-D98E-11E5-9EEC-0002A5D5C51B", BLERead | BLEWrite | BLENotify, 28);
 
 // Pin e array dati PWM
 #define MOT1 7
-#define MOT2 10
+#define MOT2 6
 #define VOLT A0
 
 
@@ -120,14 +120,15 @@ void loop() {
       gestisciComandiBLE();
 
 
-      //  questo codice ha effetto siccome non ha PID e sensori collegati. quando verranno
+      //  
       if (q1 != qnew1 || q2 != qnew2) {
         q1 = qnew1;
         q2 = qnew2;
         pwm1 = calcolaPWM(qnew1, V1, q1);
         pwm2 = calcolaPWM(qnew2, V2, q2);
+        //in questo caso viene cambiato il pwm da open loop qua (non viene cambiato ad ogni ciclo per non esagerare sulla cpu)
         analogWrite(MOT1, pwm1);
-        analogWrite(MOT2, pwm2);
+        analogWrite(MOT2, pwm2); 
       }
       // Debug flussi
       for (int i = 0; i < 5; i++) {
@@ -342,9 +343,9 @@ void gestisciComandiBLE() {
 
 void inviaDatiBLE() {
   dati[0] = analogRead(VOLT) * (3.3 / 1023.0);  // tensione di riferimento (opzionale)
-  dati[1] = raw_flux[0];
+  dati[1] = q1;
   dati[2] = pwm2volt(pwm1);  //V1;
-  dati[3] = raw_flux[1];
+  dati[3] = q2;
   dati[4] = pwm2volt(pwm2);
   dati[5] = input1;
   dati[6] = input2;
