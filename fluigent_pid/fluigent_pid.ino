@@ -62,8 +62,8 @@ PID  pid2(&input2, &pwm2_d, &setpoint2, kp, ki, kd, DIRECT);
 // Array per invio dati BLE
 bool pid_flag = true;
 // POMPA PICCOLA
-float alfa = 0.4868;
-float beta = 2.427;
+float alfa = 0.635;
+float beta = 2.228;
 float dati[7];
 int pwm1_set = 0;
 int pwm2_set = 0;
